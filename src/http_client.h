@@ -454,8 +454,8 @@ extern u8 browser_type;
 
 extern u8 auth_type;
 
-extern u8 *auth_user,
-          *auth_pass;
+extern u8 *http_client_auth_user,
+          *http_client_auth_pass;
 
 #ifdef PROXY_SUPPORT
 extern u8* use_proxy;

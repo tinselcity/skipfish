@@ -444,7 +444,7 @@ static void collect_samples(struct http_request *req, struct http_response *res)
 
   if (!req->pivot->dupe && res->sniffed_mime) {
 
-    for (i=0;i<m_samp_cnt;i++)
+    for (i=0;i<m_samp_cnt;i++) {
       if (!strcmp((char*)m_samp[i].det_mime, (char*)res->sniffed_mime)) break;
 
       if (i == m_samp_cnt) {
@@ -457,8 +457,9 @@ static void collect_samples(struct http_request *req, struct http_response *res)
       /* If we already have something that looks very much the same on the
          list, don't bother reporting it again. */
 
-        for (c=0;c<m_samp[i].sample_cnt;c++)
+        for (c=0;c<m_samp[i].sample_cnt;c++) {
           if (same_page(&m_samp[i].res[c]->sig, &res->sig)) return;
+        }
       }
 
       m_samp[i].req = ck_realloc(m_samp[i].req, (m_samp[i].sample_cnt + 1) *
@@ -468,7 +469,7 @@ static void collect_samples(struct http_request *req, struct http_response *res)
       m_samp[i].req[m_samp[i].sample_cnt] = req;
       m_samp[i].res[m_samp[i].sample_cnt] = res;
       m_samp[i].sample_cnt++;
-
+    }
   }
 }
 

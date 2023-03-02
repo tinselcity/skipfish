@@ -89,8 +89,8 @@ u64 bytes_sent,
     bytes_inflated,
     iterations_cnt = 0;
 
-u8 *auth_user,
-   *auth_pass;
+u8 *http_client_auth_user,
+   *http_client_auth_pass;
 
 
 #ifdef PROXY_SUPPORT
@@ -1058,10 +1058,10 @@ u8* build_request_data(struct http_request* req) {
   /* Take care of HTTP authentication next. */
 
   if (auth_type == AUTH_BASIC) {
-    u8* lp = ck_alloc(strlen((char*)auth_user) + strlen((char*)auth_pass) + 2);
+    u8* lp = ck_alloc(strlen((char*)http_client_auth_user) + strlen((char*)http_client_auth_pass) + 2);
     u8* lpb64;
 
-    sprintf((char*)lp, "%s:%s", auth_user, auth_pass);
+    sprintf((char*)lp, "%s:%s", http_client_auth_user, http_client_auth_pass);
 
     lpb64 = b64_encode(lp, strlen((char*)lp));
 
@@ -1915,6 +1915,8 @@ void async_request(struct http_request* req) {
 
 }
 
+// TODO FIX!!!
+#if 0
 /* A helper function to compare the CN / altname with our host name */
 
 static u8 match_cert_name(char* req_host, char* host) {
@@ -1947,6 +1949,7 @@ static u8 match_cert_name(char* req_host, char* host) {
 
   return 1;
 }
+#endif
 
 
 /* Check SSL properties, raise security alerts if necessary. We do not perform
@@ -1957,6 +1960,8 @@ static u8 match_cert_name(char* req_host, char* host) {
    We might eventually want to check aliases or support TLS SNI. */
 
 static void check_ssl(struct conn_entry* c) {
+// TODO FIX!!!
+#if 0
   X509 *p;
   const SSL_CIPHER *cp;
 
@@ -2053,7 +2058,7 @@ static void check_ssl(struct conn_entry* c) {
 
   } else problem(PROB_SSL_NO_CERT, c->q->req, 0, 0,
                  host_pivot(c->q->req->pivot), 0);
-
+#endif
   c->ssl_checked = 1;
 }
 

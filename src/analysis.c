@@ -328,7 +328,7 @@ static u8* html_decode_param(u8* url, u8 also_js) {
    _store, NULL if not found). Buffer needs to be NUL-terminated
    at nearest >.  The macro supports the "name\s*=aaa" cases.  */
 
-#define FIND_AND_MOVE(_store, _val, _param) { \
+#define FIND_AND_MOVE(_store, _val, _param) do { \
     (_store) = inl_strcasestr((u8*)_val, (u8*)_param); \
     if (_store) { \
       if (!isspace((_store)[-1])) { \
