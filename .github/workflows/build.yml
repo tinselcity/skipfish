@@ -32,7 +32,7 @@ jobs:
       if: matrix.os == 'ubuntu-20.04' || matrix.os == 'ubuntu-18.04'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libssl-dev libpcre3-dev libidn-dev
+        sudo apt-get install -y libssl-dev libpcre3-dev libidn11-dev
 
     - name: Install macOS dependencies
       if: matrix.os == 'macos-latest'
