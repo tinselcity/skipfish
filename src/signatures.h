@@ -80,10 +80,10 @@ void destroy_signature_lists(void);
 void signature_problem(struct signature *sig, struct http_request *req, struct http_response *res);
 
 
-struct signature** sig_list;       /* The one and only: signature list       */
+extern struct signature** sig_list;       /* The one and only: signature list       */
 
 extern u32 slist_max_cnt;          /* Allocated space in the signature lists */
-u32 slist_cnt;                     /* Actual elements in the signature lists */
+extern u32 slist_cnt;                     /* Actual elements in the signature lists */
 
 #define TYPE_PLAIN 0               /* Content type: static string            */
 #define TYPE_REGEX 1               /* Content type: regular expression       */
