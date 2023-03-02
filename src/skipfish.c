@@ -300,7 +300,7 @@ int main(int argc, char** argv) {
   gettimeofday(&tv, NULL);
   seed = tv.tv_usec ^ (tv.tv_sec << 16) ^ getpid();
 
-  SAY("skipfish web application scanner - version " VERSION "\n");
+  SAY("skipfish web application scanner - version " SKIPFISH_VERSION "\n");
 
   /* We either parse command-line arguments or read them from a config
      file. First we check if a config file was specified and read it
@@ -799,7 +799,7 @@ int main(int argc, char** argv) {
       }
 
       SAY(cYEL "\x1b[H"
-          "skipfish version " VERSION " by lcamtuf@google.com\n\n"
+          "skipfish version " SKIPFISH_VERSION " by lcamtuf@google.com\n\n"
            cBRI "  -" cPIN " %s " cBRI "-\n\n" cNOR,
            allow_domains[0]);
 

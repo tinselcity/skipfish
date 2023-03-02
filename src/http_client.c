@@ -980,7 +980,7 @@ u8* build_request_data(struct http_request* req) {
     ASD("Connection: keep-alive\r\n");
 
     if (!GET_HDR((u8*)"User-Agent", &req->par))
-      ASD("User-Agent: Mozilla/5.0 SF/" VERSION "\r\n");
+      ASD("User-Agent: Mozilla/5.0 SF/" SKIPFISH_VERSION "\r\n");
 
     /* Some servers will reject to gzip responses unless "Mozilla/..."
        is seen in User-Agent. Bleh. */
@@ -989,7 +989,7 @@ u8* build_request_data(struct http_request* req) {
 
     if (!GET_HDR((u8*)"User-Agent", &req->par))
       ASD("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; "
-          "rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 SF/" VERSION "\r\n");
+          "rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 SF/" SKIPFISH_VERSION "\r\n");
 
     ASD("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;"
         "q=0.8\r\n");
@@ -1012,7 +1012,7 @@ u8* build_request_data(struct http_request* req) {
       ASD("User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; "
           "Trident/4.0; .NET CLR 1.1.4322; InfoPath.1; .NET CLR "
           "2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; SF/"
-          VERSION ")\r\n");
+          SKIPFISH_VERSION ")\r\n");
 
     ASD("Accept-Encoding: gzip, deflate\r\n");
     ASD("Connection: Keep-Alive\r\n");
@@ -1022,7 +1022,7 @@ u8* build_request_data(struct http_request* req) {
     if (!GET_HDR((u8*)"User-Agent", &req->par))
       ASD("User-Agent: Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_1 like Mac OS "
           "X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 "
-          "Mobile/8B117 Safari/6531.22.7 SF/" VERSION "\r\n");
+          "Mobile/8B117 Safari/6531.22.7 SF/" SKIPFISH_VERSION "\r\n");
 
     ASD("Accept: application/xml,application/xhtml+xml,text/html;q=0.9,"
         "text/plain;q=0.8,image/png,*/*;q=0.5\r\n");
