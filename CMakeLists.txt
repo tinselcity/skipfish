@@ -13,7 +13,7 @@ option(BUILD_TCMALLOC       "Build with tcmalloc" OFF)
 option(BUILD_PROFILER       "Enable google cpu and heap profiler support" OFF)
 option(BUILD_ASAN           "Build with Address Sanitizer" OFF)
 option(BUILD_UBSAN          "Build with Undefined Behavior Sanitizer" OFF)
-option(BUILD_TESTS          "Build the unit tests." ON)
+option(BUILD_TESTS          "Build the unit tests." OFF)
 # ------------------------------------------------------------------------------
 # Display the current settings
 # ------------------------------------------------------------------------------
