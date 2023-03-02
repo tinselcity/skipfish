@@ -351,7 +351,7 @@ static void output_scan_info(u64 scan_time, u32 seed) {
   f = fopen("summary.js", "w");
   if (!f) PFATAL("Cannot open 'summary.js'");
 
-  fprintf(f, "var sf_version = '%s';\n", VERSION);
+  fprintf(f, "var sf_version = '%s';\n", SKIPFISH_VERSION);
   fprintf(f, "var scan_date  = '%s';\n", js_escape(ct, 0));
   fprintf(f, "var scan_seed  = '0x%08x';\n", seed);
   fprintf(f, "var scan_ms    = %llu;\n", (long long)scan_time);
