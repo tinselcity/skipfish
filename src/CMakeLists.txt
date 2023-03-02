@@ -6,7 +6,9 @@ include_directories(
   # brew support
   # ------------------------------------------------------
   /usr/local/opt/openssl/include
+  /usr/local/opt/pcre/include
   /opt/homebrew/opt/openssl/include
+  /opt/homebrew/opt/pcre/include
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 # ------------------------------------------------------------------------------
