@@ -7,8 +7,10 @@ include_directories(
   # ------------------------------------------------------
   /usr/local/opt/openssl/include
   /usr/local/opt/pcre/include
+  /usr/local/opt/libidn/include
   /opt/homebrew/opt/openssl/include
   /opt/homebrew/opt/pcre/include
+  /opt/homebrew/opt/libidn/include
   ${CMAKE_CURRENT_SOURCE_DIR}
 )
 # ------------------------------------------------------------------------------

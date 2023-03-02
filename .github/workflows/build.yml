@@ -37,7 +37,7 @@ jobs:
     - name: Install macOS dependencies
       if: matrix.os == 'macos-latest'
       run: |
-        brew install cmake dpkg openssl pcre
+        brew install cmake dpkg openssl pcre libidn
 
     - name: Run build script
       run: |
