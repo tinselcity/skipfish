@@ -56,6 +56,15 @@ endif()
 # build and install
 # ------------------------------------------------------------------------------
 SET_TARGET_PROPERTIES(skipfish_cmd PROPERTIES OUTPUT_NAME "skipfish")
+# brew hacking
+target_link_directories(skipfish_cmd PUBLIC
+    /usr/local/opt/openssl/lib
+    /opt/homebrew/opt/openssl/lib
+    /usr/local/opt/pcre/lib
+    /opt/homebrew/opt/pcre/lib
+    /usr/local/opt/libidn/lib
+    /opt/homebrew/opt/libidn/lib
+)
 target_link_libraries(skipfish_cmd
   ${DEBUG_LIBRARIES}
   pcre
