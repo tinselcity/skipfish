@@ -27,13 +27,6 @@
 
 #define SHOW_SPLASH             1       /* Annoy user with a splash screen */
 
-/* Default paths to runtime files: */
-
-#define ASSETS_DIR              "assets"
-
-/* Default signature file */
-#define SIG_FILE                "signatures/signatures.conf"
-
 /* Various default settings for HTTP client (cmdline override): */
 
 #define MAX_CONNECTIONS         40      /* Simultaneous connection cap     */

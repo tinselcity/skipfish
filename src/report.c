@@ -50,6 +50,7 @@ static struct p_sig_desc* p_sig;
 static u32 p_sig_cnt;
 u8 suppress_dupes;
 u8 *output_dir = NULL;
+u8 *assets_dir = NULL;
 u32 verbosity = 0;
 
 
@@ -889,8 +890,8 @@ static int copy_asset(const struct dirent* d) {
 
   if (d->d_name[0] == '.' || !strcmp(d->d_name, "COPYING")) return 0;
 
-  itmp = ck_alloc(strlen(ASSETS_DIR) + strlen(d->d_name) + 2);
-  sprintf((char*)itmp, "%s/%s", ASSETS_DIR, d->d_name);
+  itmp = ck_alloc(strlen(assets_dir) + strlen(d->d_name) + 2);
+  sprintf((char*)itmp, "%s/%s", assets_dir, d->d_name);
   i = open((char*)itmp, O_RDONLY);
 
   otmp = ck_alloc(strlen((char*)ca_out_dir) + strlen(d->d_name) + 2);
@@ -917,7 +918,7 @@ static int copy_asset(const struct dirent* d) {
 static void copy_static_code(u8* out_dir) {
   struct dirent** d;
   ca_out_dir = out_dir;
-  scandir(ASSETS_DIR, &d, copy_asset, NULL);
+  scandir(assets_dir, &d, copy_asset, NULL);
 }
 
 

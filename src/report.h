@@ -26,6 +26,7 @@
 
 extern u8 suppress_dupes;
 extern u8 *output_dir;
+extern u8 *assets_dir;
 
 /* Writes report to index.html in the current directory. Will create
    subdirectories, helper files, etc. */

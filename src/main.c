@@ -44,7 +44,6 @@
 #include "database.h"
 #include "http_client.h"
 #include "report.h"
-#include "options.h"
 #include "signatures.h"
 #include "auth.h"
 
@@ -53,9 +52,19 @@ struct TRK_obj* TRK[ALLOC_BUCKETS];
 u32 TRK_cnt[ALLOC_BUCKETS];
 #endif /* DEBUG_ALLOCATOR */
 
+
+/* Default paths to runtime files: */
+
+#define ASSETS_DIR              "../assets"
+
+/* Default signature file */
+
+#define SIG_FILE                "../signatures/signatures.conf"
+
 /* Ctrl-C handler... */
 
-static u8 stop_soon, clear_screen;
+static u8 stop_soon;
+static u8 clear_screen;
 
 static void ctrlc_handler(int sig) {
   stop_soon = 1;
@@ -108,7 +117,7 @@ static void usage(char* argv0) {
       "  -P               - do not parse HTML, etc, to find new links\n\n"
 
       "Reporting options:\n\n"
-
+      "  -a assets (dir) - assets directory for displaying html report (required)\n"
       "  -o dir          - write output to specified directory (required)\n"
       "  -M              - log warnings about mixed content / non-SSL passwords\n"
       "  -E              - log all HTTP/1.0 / HTTP/1.1 caching intent mismatches\n"
@@ -143,7 +152,7 @@ static void usage(char* argv0) {
 
       "  -l max_req      - max requests per second (%f)\n"
       "  -k duration     - stop scanning after the given duration h:m:s\n"
-      "  --config file   - load the specified configuration file\n\n"
+
 
       "Send comments and complaints to <heinenn@google.com>.\n", argv0,
       max_depth, max_children, max_descendants, max_requests,
@@ -153,6 +162,73 @@ static void usage(char* argv0) {
   exit(1);
 }
 
+#define OPT_STRING "+A:B:C:D:EF:G:H:I:J:K:LMNOPQR:S:T:UW:X:YZ" \
+                   "a:b:c:d:ef:g:hi:k:l:m:o:p:q:r:s:t:uvw:x:z:"
+
+struct option long_options[] = {
+    {"auth", required_argument, 0, 'A' },
+    {"host", required_argument, 0, 'F' },
+    {"cookie", required_argument, 0, 'C' },
+    {"reject-cookies", no_argument, 0, 'N' },
+    {"header", required_argument, 0, 'H' },
+    {"user-agent", required_argument, 0, 'b' },
+#ifdef PROXY_SUPPORT
+    {"proxy", required_argument, 0, 'J' },
+#endif /* PROXY_SUPPORT */
+    {"max-crawl-depth", required_argument, 0, 'd' },
+    {"max-crawl-child", required_argument, 0, 'c' },
+    {"max-crawl-descendants", required_argument, 0, 'x' },
+    {"max-request-total", required_argument, 0, 'r' },
+    {"max-request-rate", required_argument, 0, 'l'},
+    {"crawl-probability", required_argument, 0, 'p' },
+    {"seed", required_argument, 0, 'q' },
+    {"include-string", required_argument, 0, 'I' },
+    {"exclude-string", required_argument, 0, 'X' },
+    {"skip-parameter", required_argument, 0, 'K' },
+    {"no-form-submits", no_argument, 0, 'O' },
+    {"include-domain", required_argument, 0, 'D' },
+    {"no-html-parsing", no_argument, 0, 'P' },
+    {"no-extension-brute", no_argument, 0, 'Y' },
+    {"log-mixed-content", no_argument, 0, 'M' },
+    {"skip-error-pages", no_argument, 0, 'Z' },
+    {"log-external-urls", no_argument, 0, 'U' },
+    {"log-cache-mismatches", no_argument, 0, 'E' },
+    {"form-value", required_argument, 0, 'T' },
+    {"rw-wordlist", required_argument, 0, 'W' },
+    {"no-keyword-learning", no_argument, 0, 'L' },
+    {"wordlist", required_argument, 0, 'S'},
+    {"trust-domain", required_argument, 0, 'B' },
+    {"max-connections", required_argument, 0, 'g' },
+    {"max-host-connections", required_argument, 0, 'm' },
+    {"max-failed-requests", required_argument, 0, 'f' },
+    {"request-timeout", required_argument, 0, 't' },
+    {"network-timeout", required_argument, 0, 'w' },
+    {"idle-timeout", required_argument, 0, 'i' },
+    {"response-size", required_argument, 0, 's' },
+    {"discard-binary", no_argument, 0, 'e' },
+    {"output", required_argument, 0, 'o' },
+    {"help", no_argument, 0, 'h' },
+    {"quiet", no_argument, 0, 'u' },
+    {"verbose", no_argument, 0, 'v' },
+    {"scan-timeout", required_argument, 0, 'k'},
+    {"signatures", required_argument, 0, 'z'},
+    {"assets", required_argument, 0, 'a'},
+    {"checks", no_argument, 0, 0},
+    {"checks-toggle", required_argument, 0, 0},
+    {"no-injection-tests", no_argument, 0, 0},
+    {"fast", no_argument, 0, 0},
+    {"flush-to-disk", no_argument, 0, 0},
+    {"config", required_argument, 0, 0},
+    {"auth-form", required_argument, 0, 0},
+    {"auth-form-target", required_argument, 0, 0},
+    {"auth-user", required_argument, 0, 0},
+    {"auth-user-field", required_argument, 0, 0},
+    {"auth-pass", required_argument, 0, 0},
+    {"auth-pass-field", required_argument, 0, 0},
+    {"auth-verify-url", required_argument, 0, 0},
+    {0, 0, 0, 0 }
+
+};
 
 /* Welcome screen. */
 
@@ -271,13 +347,17 @@ static void read_urls(u8* fn) {
 
 int main(int argc, char** argv) {
   s32 opt;
-  u32 loop_cnt = 0, purge_age = 0, seed;
-  u8 sig_loaded = 0, show_once = 0, no_statistics = 0, display_mode = 0;
+  u32 loop_cnt = 0;
+  u32 purge_age = 0;
+  u32 seed;
+  u8 sig_loaded = 0;
+  u8 show_once = 0;
+  u8 no_statistics = 0;
+  u8 display_mode = 0;
   s32 oindex = 0;
   u8 *wordlist = NULL;
   u8 *sig_list_strg = NULL;
   u8 *gtimeout_str = NULL;
-  const char *config_file = NULL;
   u32 gtimeout = 0;
 
 #ifdef PROXY_SUPPORT
@@ -302,24 +382,12 @@ int main(int argc, char** argv) {
 
   SAY("skipfish web application scanner - version " SKIPFISH_VERSION "\n");
 
-  /* We either parse command-line arguments or read them from a config
-     file. First we check if a config file was specified and read it
-     content into the argc and argv pointers */
-
-  while ((opt = getopt_long(argc, argv, OPT_STRING,
-          long_options, &oindex)) >= 0 && !config_file) {
-        if (!opt && !strcmp("config", long_options[oindex].name ))
-          config_file = optarg;
-  }
+  /* set default assets dir */
+  assets_dir = (u8*)(ASSETS_DIR);
 
   /* Reset the index */
   oindex = 0;
   optind = 1;
-
-  if (config_file) {
-    DEBUG("Reading configuration file: %s\n", config_file);
-    read_config_file(config_file, &argc, &argv);
-  }
 
   /* Parse the command-line flags. If a configuration file was specified,
      the options loaded from it are now present in argv and will therefore
@@ -561,15 +629,17 @@ int main(int argc, char** argv) {
         if (!size_limit) FATAL("Invalid value '%s'.", optarg);
         break;
 
+      case 'a':
+        if (assets_dir) FATAL("Multiple -a options not allowed.");
+        assets_dir = (u8*)optarg;
+        break;
+
       case 'o':
         if (output_dir) FATAL("Multiple -o options not allowed.");
         output_dir = (u8*)optarg;
-
         rmdir(optarg);
-
         if (mkdir(optarg, 0755))
           PFATAL("Unable to create '%s'.", output_dir);
-
         break;
 
       case 'u':

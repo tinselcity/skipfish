@@ -20,13 +20,12 @@ SET(SRCS
   analysis.c
   checks.c
   database.c
-  options.c
   signatures.c
   auth.c
   crawler.c
   http_client.c
   report.c
-  skipfish.c
+  main.c
 )
 SET_SOURCE_FILES_PROPERTIES(${SRCS} PROPERTIES LANGUAGE C)
 add_executable(skipfish_cmd ${HDRS} ${SRCS})
